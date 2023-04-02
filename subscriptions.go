@@ -10,7 +10,7 @@ import (
 
 // GetAllSubscriptions - Returns all subscriptions
 func (c *Client) GetAllSubscriptions() (*[]Subscription, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/push_subscriptions", c.HostURL), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%v/push_subscriptions", c.HostURL), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -79,19 +79,15 @@ func (c *Client) CreateSubscription(subscriptionItem SubscriptionItem) (*Subscri
 }
 
 // DeleteSubscription - Deletes a subscription
-func (c *Client) DeleteSubscription(subscriptionID string) error {
-	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/subscriptions/%s", c.HostURL, subscriptionID), nil)
+func (c *Client) DeleteSubscription(subscriptionID int) error {
+	req, err := http.NewRequest("DELETE", fmt.Sprintf("%v/push_subscriptions/%v", c.HostURL, subscriptionID), nil)
 	if err != nil {
 		return err
 	}
 
-	body, err := c.doRequest(req)
+	_, err = c.doRequest(req)
 	if err != nil {
 		return err
-	}
-
-	if string(body) != "Deleted subscription" {
-		return errors.New(string(body))
 	}
 
 	return nil
