@@ -47,14 +47,17 @@ func (c *Client) GetSubscription(subscriptionID int) (*Subscription, error) {
 
 // CreateSubscription - Create a new subscription
 func (c *Client) CreateSubscription(subscriptionItem SubscriptionItem) (*Subscription, error) {
-	url := url.URL{
-		Host: c.HostURL,
-		Path: "/push_subscriptions",
+	url, err := url.Parse(c.HostURL)
+	if err != nil {
+		return nil, err
 	}
 
+	url = url.JoinPath("push_subscriptions")
+
 	q := url.Query()
-	q.Add("callback_url", subscriptionItem.CallbackURL)
-	q.Add("verify_token", subscriptionItem.VerifyToken)
+	q.Set("callback_url", subscriptionItem.CallbackURL)
+	q.Set("verify_token", subscriptionItem.VerifyToken)
+	url.RawQuery = q.Encode()
 
 	req, err := http.NewRequest("POST", url.String(), nil)
 	if err != nil {
