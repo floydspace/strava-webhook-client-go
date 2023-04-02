@@ -30,7 +30,7 @@ func NewClient(host, clientId, clientSecret *string) (*Client, error) {
 		c.HostURL = *host
 	}
 
-	// If username or password not provided, return empty client
+	// If clientId or clientSecret not provided, return empty client
 	if clientId == nil || clientSecret == nil {
 		return &c, nil
 	}
@@ -42,11 +42,10 @@ func NewClient(host, clientId, clientSecret *string) (*Client, error) {
 }
 
 func (c *Client) doRequest(req *http.Request) ([]byte, error) {
-	// token := c.Token
-
 	q := req.URL.Query()
-	q.Add("client_id", c.ClientId)
-	q.Add("client_secret", c.ClientSecret)
+	q.Set("client_id", c.ClientId)
+	q.Set("client_secret", c.ClientSecret)
+	req.URL.RawQuery = q.Encode()
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
