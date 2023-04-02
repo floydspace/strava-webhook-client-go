@@ -8,7 +8,7 @@ import (
 	"net/url"
 )
 
-// GetAllSubscriptions - Returns all subscription details
+// GetAllSubscriptions - Returns all subscriptions
 func (c *Client) GetAllSubscriptions() (*[]Subscription, error) {
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/push_subscriptions", c.HostURL), nil)
 	if err != nil {
@@ -27,6 +27,22 @@ func (c *Client) GetAllSubscriptions() (*[]Subscription, error) {
 	}
 
 	return &subscriptions, nil
+}
+
+// GetSubscription - Returns a subscription
+func (c *Client) GetSubscription(subscriptionID int) (*Subscription, error) {
+	subscriptions, err := c.GetAllSubscriptions()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, subscription := range *subscriptions {
+		if subscription.ID == subscriptionID {
+			return &subscription, nil
+		}
+	}
+
+	return nil, errors.New("Subscription not found")
 }
 
 // CreateSubscription - Create a new subscription
