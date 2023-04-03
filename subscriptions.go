@@ -47,12 +47,10 @@ func (c *Client) GetSubscription(subscriptionID int) (*Subscription, error) {
 
 // CreateSubscription - Create a new subscription
 func (c *Client) CreateSubscription(subscriptionItem SubscriptionItem) (*Subscription, error) {
-	url, err := url.Parse(c.HostURL)
+	url, err := url.Parse(fmt.Sprintf("%v/push_subscriptions", c.HostURL))
 	if err != nil {
 		return nil, err
 	}
-
-	url = url.JoinPath("push_subscriptions")
 
 	q := url.Query()
 	q.Set("callback_url", subscriptionItem.CallbackURL)
